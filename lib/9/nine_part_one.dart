@@ -1,15 +1,33 @@
 import 'package:collection/collection.dart';
 
-List<int> currCordinate = [0, 0];
+List<List<int>> tailCordinates = [
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+];
 
 List<List<int>> visitedCordinates = [
   [0, 0]
 ];
-int stepCounter = 0;
+
+Map<String, int> directionValue = {
+  'L': -1,
+  'U': 1,
+  'R': 1,
+  'D': -1,
+};
+
+List<int> head = [0, 0];
 
 ninePartOne(List<String> lines) {
-  PosDiff posDiff = PosDiff();
-  late Direction currDir;
+  late String currDir;
 
   int currStepsToGo = 0;
 
@@ -20,8 +38,9 @@ ninePartOne(List<String> lines) {
     }
 
     for (int i = 0; i < currStepsToGo; i++) {
-      if (isTouching(posDiff)) {
-        posDiff = moveHead(
+      if (isTouching2(
+          tailCordinates.first[0], tailCordinates.first[1], head[0], head[1])) {
+        moveHead(
           currDir: currDir,
           posDiff: posDiff,
         );
@@ -39,6 +58,15 @@ ninePartOne(List<String> lines) {
   print(visitedCordinates.length);
 }
 
+bool isTouching2(int dx1, int dy1, int dx2, int dy2) {
+  (dx1.abs() - dx2.abs()) < 2;
+  (dy1.abs() - dy2.abs()) < 2;
+
+  return (dx1.abs() - dx2.abs()) < 2 &&
+      (dy1.abs() - dy2.abs()) < 2 &&
+      (dx1.abs() - dx2.abs() + (dy1.abs() - dy2.abs())) < 2;
+}
+
 bool isTouching(PosDiff posDiff) {
   return posDiff.left < 2 &&
       posDiff.top < 2 &&
@@ -50,40 +78,24 @@ int getStepsToGo(String line) {
   return int.parse(line.split(' ')[1]);
 }
 
-Direction getDir(String line) {
-  final String directionString = line.split(' ')[0];
-  switch (directionString) {
-    case 'L':
-      return Direction.left;
-    case 'U':
-      return Direction.top;
-    case 'R':
-      return Direction.right;
-    case 'D':
-      return Direction.bottom;
-
-    default:
-      print('UNKOWN DIRECTION: $line');
-      return Direction.unkown;
-  }
+String getDir(String line) {
+  return line.split(' ')[0];
 }
 
 PosDiff moveHead({
-  required Direction currDir,
-  required PosDiff posDiff,
+  required String currDir,
 }) {
-  PosDiff posDiffToReturn = posDiff;
   switch (currDir) {
     case Direction.left:
-      if (posDiff.right > 0) {
-        posDiffToReturn.right -= 1;
+      if (head[1] > 0) {
+        head[1] -= 1;
       } else {
-        posDiffToReturn.left += 1;
+        head[1] += 1;
       }
       break;
     case Direction.top:
       if (posDiff.bottom > 0) {
-        posDiffToReturn.bottom -= 1;
+        head[1] -= 1;
       } else {
         posDiffToReturn.top += 1;
       }
