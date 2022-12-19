@@ -1,193 +1,176 @@
 import 'package:collection/collection.dart';
 
-List<List<int>> tailCordinates = [
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-];
+class NinePartOne {
+  final List<String> lines;
 
-List<List<int>> visitedCordinates = [
-  [0, 0]
-];
+  NinePartOne(this.lines);
 
-Map<String, int> directionValue = {
-  'L': -1,
-  'U': 1,
-  'R': 1,
-  'D': -1,
-};
+  List<List<int>> tailCordinates = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    // [0, 0],
+  ];
 
-List<int> head = [0, 0];
+  List<List<int>> visitedCordinates = [
+    [0, 0]
+  ];
 
-ninePartOne(List<String> lines) {
-  late String currDir;
+  Map<String, int> directionValues = {
+    'L': -1,
+    'U': 1,
+    'R': 1,
+    'D': -1,
+  };
 
-  int currStepsToGo = 0;
+  List<int> head = [0, 0];
 
-  for (String line in lines) {
-    if (currStepsToGo == 0) {
+  run() {
+    print(isTouching(cordinate: [-1, 8], cordinateToCompare: [1, 8]));
+
+    late String currDir;
+
+    int currStepsToGo = 0;
+
+    for (String line in lines) {
       currDir = getDir(line);
       currStepsToGo = getStepsToGo(line);
-    }
+      print('----------NEW DIRECTION:  $currDir-----------');
 
-    for (int i = 0; i < currStepsToGo; i++) {
-      if (isTouching2(
-          tailCordinates.first[0], tailCordinates.first[1], head[0], head[1])) {
+      for (int i = 0; i < currStepsToGo; i++) {
         moveHead(
-          currDir: currDir,
-          posDiff: posDiff,
+          directionChar: currDir,
         );
-      }
-      if (!isTouching(posDiff)) {
-        posDiff = moveTail(
-          posDiff: posDiff,
+        moveTail(
           curDirr: currDir,
         );
+
+        print('move head: $head');
+        print(tailCordinates);
       }
+      // currStepsToGo = 0;
     }
-    currStepsToGo = 0;
+
+    print(visitedCordinates.length);
   }
 
-  print(visitedCordinates.length);
-}
+  bool isTouching({
+    required List<int> cordinate,
+    required List<int> cordinateToCompare,
+  }) {
+    // print('--------------------------');
+    // print('cordinate: $cordinate');
+    // print('cordinateToCompare: $cordinateToCompare');
+    // print('horizontally:');
+    // print((cordinate[0].abs() - cordinateToCompare[0].abs()).abs());
+    // print('vertically:');
+    // print((cordinate[1].abs() - cordinateToCompare[1].abs()).abs());
+    // print('diagonally:');
+    // print((cordinate[0].abs() -
+    //         cordinateToCompare[0].abs() +
+    //         (cordinate[1].abs() - cordinateToCompare[1].abs()))
+    //     .abs());
+    final int xDiff = (cordinate[0] - cordinateToCompare[0]).abs();
+    bool touchingHorizontally = xDiff < 2;
 
-bool isTouching2(int dx1, int dy1, int dx2, int dy2) {
-  (dx1.abs() - dx2.abs()) < 2;
-  (dy1.abs() - dy2.abs()) < 2;
+    final int yDiff = (cordinate[1] - cordinateToCompare[1]).abs();
+    bool touchingVertically = yDiff < 2;
 
-  return (dx1.abs() - dx2.abs()) < 2 &&
-      (dy1.abs() - dy2.abs()) < 2 &&
-      (dx1.abs() - dx2.abs() + (dy1.abs() - dy2.abs())) < 2;
-}
-
-bool isTouching(PosDiff posDiff) {
-  return posDiff.left < 2 &&
-      posDiff.top < 2 &&
-      posDiff.right < 2 &&
-      posDiff.bottom < 2;
-}
-
-int getStepsToGo(String line) {
-  return int.parse(line.split(' ')[1]);
-}
-
-String getDir(String line) {
-  return line.split(' ')[0];
-}
-
-PosDiff moveHead({
-  required String currDir,
-}) {
-  switch (currDir) {
-    case Direction.left:
-      if (head[1] > 0) {
-        head[1] -= 1;
-      } else {
-        head[1] += 1;
-      }
-      break;
-    case Direction.top:
-      if (posDiff.bottom > 0) {
-        head[1] -= 1;
-      } else {
-        posDiffToReturn.top += 1;
-      }
-      break;
-    case Direction.right:
-      if (posDiff.left > 0) {
-        posDiffToReturn.left -= 1;
-      } else {
-        posDiffToReturn.right += 1;
-      }
-      break;
-    case Direction.bottom:
-      if (posDiff.top > 0) {
-        posDiffToReturn.top -= 1;
-      } else {
-        posDiffToReturn.bottom += 1;
-      }
-      break;
-    case Direction.unkown:
-      print('UNKOWN DIRECTION');
-      break;
-  }
-  return posDiffToReturn;
-}
-
-PosDiff moveTail({
-  required PosDiff posDiff,
-  required Direction curDirr,
-}) {
-  PosDiff posDiffToReturn = posDiff;
-
-  // print('-------- TAIL MOVE -----------');
-  if (posDiff.left > 0) {
-    posDiffToReturn.left -= 1;
-    currCordinate[0] -= 1;
-    // print('left');
-  }
-  if (posDiff.top > 0) {
-    posDiffToReturn.top -= 1;
-    currCordinate[1] += 1;
-
-    // print('top');
-  }
-  if (posDiff.right > 0) {
-    posDiffToReturn.right -= 1;
-    currCordinate[0] += 1;
-
-    // print('right');
-  }
-  if (posDiff.bottom > 0) {
-    posDiffToReturn.bottom -= 1;
-    currCordinate[1] -= 1;
-
-    // print('bottom');
+    // bool notTouchingDiagonally = xDiff + yDiff >= 2;
+    // print(
+    //     'touching: ${touchingHorizontally && touchingVertically && touchingDiagonally}');
+    return touchingHorizontally && touchingVertically;
   }
 
-  bool visited = false;
-  for (var cordinate in visitedCordinates) {
-    visited = ListEquality().equals(cordinate, currCordinate);
-    if (visited) {
-      return posDiffToReturn;
+  int getStepsToGo(String line) {
+    return int.parse(line.split(' ')[1]);
+  }
+
+  String getDir(String line) {
+    return line.split(' ')[0];
+  }
+
+  void moveHead({
+    required String directionChar,
+  }) {
+    switch (directionChar) {
+      case 'L':
+      case 'R':
+        head[0] += directionValues[directionChar]!;
+        return;
+      case 'U':
+      case 'D':
+        head[1] += directionValues[directionChar]!;
+        return;
+      default:
+        print('UNKOWN DIRECTION: $directionChar');
     }
   }
-  stepCounter += 1;
-  visitedCordinates.add([currCordinate[0], currCordinate[1]]);
 
-  // print(currCordinate);
-  // print(visitedCordinates);
+  void moveTail({
+    required String curDirr,
+  }) {
+    for (int i = 0; i < tailCordinates.length; i++) {
+      bool isFirstElement = i == 0;
 
-  // print('------------------');
+      List<int> currentTailCordinate = tailCordinates[i];
+      List<int> elementBefore = isFirstElement ? head : tailCordinates[i - 1];
+      bool touching = isTouching(
+        cordinate: currentTailCordinate,
+        cordinateToCompare: elementBefore,
+      );
 
-  return posDiffToReturn;
+      if (touching) {
+        // nothing
+        return;
+      } else {
+        int xDiff = (elementBefore.first - currentTailCordinate.first);
+        int yDiff = (elementBefore.last - currentTailCordinate.last);
+
+        if (xDiff.abs() > 0) {
+          if (xDiff < 0) {
+            currentTailCordinate[0] -= 1;
+          } else {
+            currentTailCordinate[0] += 1;
+          }
+        }
+        if (yDiff.abs() > 0) {
+          if (yDiff < 0) {
+            currentTailCordinate[1] -= 1;
+          } else {
+            currentTailCordinate[1] += 1;
+          }
+        }
+
+        if (i == tailCordinates.length - 1) {
+          bool visited = false;
+
+          for (var cordinate in visitedCordinates) {
+            visited = ListEquality().equals(
+              cordinate,
+              currentTailCordinate,
+            );
+            if (visited) {
+              return;
+            }
+          }
+          print(
+            'new visited cordinate: ${currentTailCordinate[0]} ${currentTailCordinate[1]}',
+          );
+          visitedCordinates.add(
+            [
+              currentTailCordinate[0],
+              currentTailCordinate[1],
+            ],
+          );
+        }
+      }
+    }
+  }
 }
-
-enum Direction {
-  left,
-  top,
-  right,
-  bottom,
-  unkown,
-}
-
-class PosDiff {
-  int left = 0;
-  int top = 0;
-  int right = 0;
-  int bottom = 0;
-}
-
-// class Cordinate {
-//   int x;
-//   int y;
-
-//   Cordinate(this.x, this.y);
-// }
