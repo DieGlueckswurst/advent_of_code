@@ -71,17 +71,18 @@ def fillVisited():
         monkeyVisitedItems[i] = 0
   
 fillVisited()
-rounds = 20
+rounds = 10000
 
 for r in range(rounds):
     i = 0
+    print(r)
     for monkey in monkeys:
-        print(monkey.items)
+        # print(monkey.items)
         itemsLen = len(monkey.items) 
         for itemIndex in range(itemsLen):
-            print(itemIndex)
+            # print(itemIndex)
             worry_level = monkey.items[itemIndex]
-            print(monkey.operation.split())
+            # print(monkey.operation.split())
             number = monkey.operation.split()[1]
             if number == 'old':
                 number = worry_level  
@@ -89,7 +90,7 @@ for r in range(rounds):
                 worry_level += int(number)
             if (multiply) in monkey.operation:
                 worry_level *= int(number)
-            worry_level = int(worry_level/3)
+            # worry_level = int(worry_level/3)
             if worry_level % monkey.test == 0:
                 monkeys[monkey.trueNext].items.append(worry_level)
             else: 
